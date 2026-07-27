@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Design and order custom apparel from your phone or computer.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="stylesheet" href="styles.css">
+  <title>Custom Shirt Studio</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">CS</div>
+    <div><strong id="brandName">Custom Shirt Studio</strong><small>Design it. Approve it. We print it.</small></div>
+  </div>
+  <div class="top-actions">
+    <button id="installBtn" class="btn ghost" hidden>Install App</button>
+    <a class="btn ghost" href="tryon.html">Try-On</a><a class="btn ghost" href="admin.html">Admin</a>
+  </div>
+</header>
+
+<main class="shell">
+  <section class="hero">
+    <div>
+      <span class="eyebrow">CUSTOM PRINTING MADE SIMPLE</span>
+      <h1>Create your design exactly how you want it.</h1>
+      <p>Choose a product, upload artwork, add text, select sizes, approve the preview, and submit your order.</p>
+    </div>
+    <button id="startDesignBtn" class="btn primary large">Start Designing</button>
+  </section>
+
+  <nav class="steps" aria-label="Order steps">
+    <button class="step active" data-step="1"><span>1</span>Product</button>
+    <button class="step" data-step="2"><span>2</span>Design</button>
+    <button class="step" data-step="3"><span>3</span>Quantity</button>
+    <button class="step" data-step="4"><span>4</span>Review</button>
+  </nav>
+
+  <section id="panel1" class="panel active">
+    <div class="card section-card">
+      <div class="section-head"><div><h2>Choose a product</h2><p>Select what you want to customize.</p></div></div>
+      <div id="categoryTabs" class="category-tabs"></div>
+      <div id="productGrid" class="product-grid"></div>
+    </div>
+  </section>
+
+  <section id="panel2" class="panel">
+    <div class="designer-layout">
+      <aside class="card controls">
+        <h2>Customize</h2>
+        <div class="selected-product">
+          <div id="selectedProductThumb" class="mini-product"></div>
+          <div><strong id="selectedProductName">Classic T-Shirt</strong><small id="selectedProductPrice">Starting at $31.99</small></div>
+        </div>
+
+        <label>Garment color
+          <div id="swatches" class="swatches"></div>
+        </label>
+
+        <div class="segment three">
+          <button class="side active" data-side="front">Front</button>
+          <button class="side" data-side="back">Back</button>
+          <button class="side" data-side="leftChest">Left Chest</button>
+        </div>
+
+        <button id="uploadBtn" class="btn primary full">Upload Artwork</button>
+        <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+
+        <div class="stack">
+          <input id="textInput" placeholder="Type your text">
+          <div class="two">
+            <select id="fontSelect">
+              <option value="Arial">Arial</option>
+              <option value="Impact">Impact</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Trebuchet MS">Trebuchet</option>
+              <option value="Courier New">Courier</option>
+            </select>
+            <input id="textColor" type="color" value="#111111" aria-label="Text color">
+          </div>
+          <button id="addTextBtn" class="btn soft full">Add Text</button>
+        </div>
+
+        <div class="selected-box">
+          <h3>Selected item</h3>
+          <label>Size<input id="sizeRange" type="range" min="30" max="300" value="110"></label>
+          <label>Rotate<input id="rotateRange" type="range" min="-180" max="180" value="0"></label>
+          <label>Opacity<input id="opacityRange" type="range" min="20" max="100" value="100"></label>
+          <div class="two">
+            <button id="duplicateBtn" class="btn soft">Duplicate</button>
+            <button id="deleteBtn" class="btn danger">Delete</button>
+          </div>
+          <div class="two">
+            <button id="undoBtn" class="btn ghost">Undo</button>
+            <button id="redoBtn" class="btn ghost">Redo</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="card designer">
+        <div class="designer-head">
+          <div><h2 id="designerProductTitle">Classic T-Shirt</h2><p id="sideTitle">Front preview</p></div>
+          <button id="clearBtn" class="btn ghost">Clear side</button>
+        </div>
+        <div class="shirt-area">
+          <div id="garmentMockup" class="garment tee">
+            <div class="garment-neck"></div>
+            <div class="print-zone"><canvas id="designCanvas" width="700" height="840"></canvas></div>
+          </div>
+        </div>
+        <p class="helper">Tap or click an item to select it. Drag it to move. Use the sliders to resize or rotate.</p>
+      </section>
+    </div>
+    <div class="footer-actions">
+      <button class="btn ghost" data-go="1">Back</button>
+      <button id="saveBtn" class="btn ghost">Save Design</button>
+      <button class="btn primary" data-go="3">Choose Sizes</button>
+    </div>
+  </section>
+
+  <section id="panel3" class="panel">
+    <div class="card quantity">
+      <h2>Choose sizes and quantities</h2>
+      <p>Pricing updates automatically based on the total number of items.</p>
+      <div class="audience-tabs">
+        <button class="audience active" data-audience="Adult">Adult</button>
+        <button class="audience" data-audience="Youth">Youth</button>
+      </div>
+      <div id="sizeGrid" class="size-grid"></div>
+      <div class="price-card">
+        <div><span>Total items</span><strong id="totalQty">0</strong></div>
+        <div><span>Price per item</span><strong id="unitPrice">$0.00</strong></div>
+        <div><span>Print areas</span><strong id="printAreaCount">0</strong></div>
+        <div class="price-total"><span>Estimated total</span><strong id="totalPrice">$0.00</strong></div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn ghost" data-go="2">Back to Design</button>
+        <button id="toReviewBtn" class="btn primary">Review Order</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel4" class="panel">
+    <div class="review-layout">
+      <section class="card review-card">
+        <h2>Review your design</h2>
+        <div class="preview-grid">
+          <div><h3>Front</h3><img id="frontPreview" alt="Front preview"></div>
+          <div><h3>Back</h3><img id="backPreview" alt="Back preview"></div>
+          <div><h3>Left Chest</h3><img id="leftChestPreview" alt="Left chest preview"></div>
+        </div>
+      </section>
+
+      <aside class="card summary">
+        <h2>Order Summary</h2>
+        <div class="summary-line"><span>Product</span><strong id="summaryProduct"></strong></div>
+        <div class="summary-line"><span>Color</span><strong id="summaryColor"></strong></div>
+        <div class="summary-line"><span>Quantity</span><strong id="summaryQty"></strong></div>
+        <div class="summary-line"><span>Sizes</span><strong id="summarySizes"></strong></div>
+        <div class="summary-line"><span>Fulfillment</span><strong id="summaryFulfillment"></strong></div>
+        <div class="summary-line total"><span>Total</span><strong id="summaryTotal"></strong></div>
+
+        <label class="approval"><input id="approvalCheck" type="checkbox"><span>I approve the artwork, spelling, placement, garment color, and size quantities shown.</span></label>
+
+        <div class="stack">
+          <input id="customerName" placeholder="Full name">
+          <input id="customerEmail" type="email" placeholder="Email address">
+          <input id="customerPhone" type="tel" placeholder="Phone number">
+          <select id="deliveryMethod">
+            <option value="Store pickup">Store pickup</option>
+            <option value="Shipping">Shipping</option>
+            <option value="Local delivery">Local delivery</option>
+          </select>
+          <textarea id="orderNotes" placeholder="Order notes"></textarea>
+        </div>
+
+        <button id="placeOrderBtn" class="btn pay full">Place Demo Order</button>
+        <p class="demo-note">This package stores orders in the browser. Stripe and cloud storage require your business account keys.</p>
+        <button class="btn ghost full" data-go="3">Edit Quantity</button>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast"></div>
+<script src="config.js"></script><script src="app.js"></script>
+</body>
+</html>

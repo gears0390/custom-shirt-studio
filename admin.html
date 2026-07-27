@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <link rel="stylesheet" href="styles.css">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">CS</div><div><strong>Admin Dashboard</strong><small>Orders and production queue</small></div></div>
+  <div class="top-actions"><a class="btn ghost" href="index.html">Customer App</a></div>
+</header>
+<main class="shell">
+  <section class="admin-stats">
+    <div class="stat card"><span>Total Orders</span><strong id="statOrders">0</strong></div>
+    <div class="stat card"><span>Revenue</span><strong id="statRevenue">$0.00</strong></div>
+    <div class="stat card"><span>New</span><strong id="statNew">0</strong></div>
+    <div class="stat card"><span>Completed</span><strong id="statCompleted">0</strong></div>
+  </section>
+
+  <section class="card section-card">
+    <div class="section-head">
+      <div><h2>Orders</h2><p>Demo orders saved on this device.</p></div>
+      <div class="top-actions">
+        <button id="exportBtn" class="btn ghost">Export Orders</button>
+        <button id="clearOrdersBtn" class="btn danger">Clear Demo Orders</button>
+      </div>
+    </div>
+    <div class="admin-filters">
+      <input id="searchOrders" placeholder="Search customer, email, or order number">
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option>New</option><option>Artwork Check</option><option>Printing</option><option>Ready</option><option>Completed</option>
+      </select>
+    </div>
+    <div id="ordersList" class="orders-list"></div>
+  </section>
+
+<section class="admin-stats">
+  <div class="stat card"><span>Customers</span><strong id="statCustomers">0</strong></div>
+  <div class="stat card"><span>Products</span><strong id="statProducts">8</strong></div>
+  <div class="stat card"><span>Coupons</span><strong id="statCoupons">0</strong></div>
+  <div class="stat card"><span>Inventory Alerts</span><strong id="statInventory">0</strong></div>
+</section>
+
+<section class="card section-card" style="margin-top:16px">
+  <div class="section-head"><div><h2>Business Tools</h2><p>Prototype tools stored on this device.</p></div></div>
+  <div class="admin-tools-grid">
+    <div>
+      <h3>Create Coupon</h3>
+      <div class="stack">
+        <input id="couponCode" placeholder="Coupon code">
+        <input id="couponPercent" type="number" min="1" max="100" placeholder="Percent off">
+        <button id="addCouponBtn" class="btn soft">Add Coupon</button>
+      </div>
+      <div id="couponList" class="mini-list"></div>
+    </div>
+    <div>
+      <h3>Add Inventory Alert</h3>
+      <div class="stack">
+        <input id="inventoryProduct" placeholder="Product name">
+        <input id="inventoryQty" type="number" min="0" placeholder="Quantity remaining">
+        <button id="addInventoryBtn" class="btn soft">Save Inventory</button>
+      </div>
+      <div id="inventoryList" class="mini-list"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script src="config.js"></script><script src="admin.js"></script>
+</body>
+</html>

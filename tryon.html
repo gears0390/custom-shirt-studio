@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<link rel="stylesheet" href="styles.css">
+<title>Virtual Try-On</title>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">CS</div><div><strong>Virtual Try-On</strong><small>Preview your design on a photo</small></div></div>
+  <div class="top-actions"><a class="btn ghost" href="index.html">Back to Designer</a></div>
+</header>
+
+<main class="shell">
+  <section class="card section-card">
+    <div class="section-head">
+      <div>
+        <h2>Upload a front-facing photo</h2>
+        <p>This local preview places the selected shirt and artwork over your photo. It is not yet a body-aware AI fitting engine.</p>
+      </div>
+    </div>
+
+    <div class="tryon-layout">
+      <aside class="tryon-controls">
+        <button id="personUploadBtn" class="btn primary full">Upload Your Photo</button>
+        <input id="personFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+
+        <label>Shirt style
+          <select id="tryonProduct">
+            <option value="assets/tee.svg">Classic T-Shirt</option>
+            <option value="assets/hoodie.svg">Pullover Hoodie</option>
+          </select>
+        </label>
+
+        <label>Shirt color
+          <input id="shirtTint" type="color" value="#ffffff">
+        </label>
+
+        <label>Shirt size
+          <input id="shirtScale" type="range" min="25" max="100" value="58">
+        </label>
+
+        <label>Vertical position
+          <input id="shirtY" type="range" min="10" max="85" value="48">
+        </label>
+
+        <label>Horizontal position
+          <input id="shirtX" type="range" min="15" max="85" value="50">
+        </label>
+
+        <button id="designUploadBtn" class="btn soft full">Upload Shirt Design</button>
+        <input id="designFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+
+        <label>Design size
+          <input id="designScale" type="range" min="8" max="55" value="24">
+        </label>
+
+        <button id="downloadTryonBtn" class="btn ghost full">Download Preview</button>
+      </aside>
+
+      <section class="tryon-stage card">
+        <canvas id="tryonCanvas" width="900" height="1200"></canvas>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script src="tryon.js"></script>
+</body>
+</html>
