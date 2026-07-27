@@ -154,10 +154,16 @@
           <div class="top-actions"><button id="zoomOutBtn" class="btn ghost">−</button><span id="zoomLabel" class="zoom-label">100%</span><button id="zoomInBtn" class="btn ghost">+</button><button id="exportPrintBtn" class="btn ghost">Export Print PNG</button><button id="clearBtn" class="btn ghost">Clear side</button></div>
         </div>
         <div class="shirt-area">
-          <div id="mockupWrap"><div id="garmentMockup" class="garment tee">
-            <div class="garment-neck"></div>
-            <div class="print-zone"><canvas id="designCanvas" width="700" height="840"></canvas></div>
-          </div></div>
+          <div id="mockupWrap" class="mockup-wrap">
+            <div id="garmentMockup" class="garment-photo-stage tee">
+              <img id="garmentPhoto" class="garment-photo" src="assets/tee-realistic.svg" alt="Realistic T-shirt mockup">
+              <div id="garmentTint" class="garment-tint"></div>
+              <div class="print-zone">
+                <div class="safe-area-label">PRINT AREA</div>
+                <canvas id="designCanvas" width="700" height="840"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
         <p class="helper">Click an item to select it. Drag the center to move, drag a blue corner to resize, and drag the round top handle to rotate.</p>
       </section>
@@ -237,6 +243,6 @@
 </main>
 
 <div id="toast" class="toast"></div>
-<script src="config.js"></script><script src="catalog.js"></script><script src="app.js"></script><script src="click-hotfix.js"></script><script src="designer-v10.js"></script>
+<script src="config.js"></script><script src="catalog.js"></script><script src="app.js"></script><script src="click-hotfix.js"></script><script src="designer-v10.js"></script><script src="drag-shirt-fix.js"></script>
 </body>
 </html>
