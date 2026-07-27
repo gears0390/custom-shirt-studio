@@ -18,6 +18,7 @@
     <div><strong id="brandName">Custom Shirt Studio</strong><small>Design it. Approve it. We print it.</small></div>
   </div>
   <div class="top-actions">
+    <button id="homeBtn" class="btn ghost">Home</button>
     <button id="installBtn" class="btn ghost" hidden>Install App</button>
     <a class="btn ghost" href="tryon.html">Try-On</a><a class="btn ghost" href="admin.html">Admin</a>
   </div>
@@ -61,32 +62,66 @@
           <div id="swatches" class="swatches"></div>
         </label>
 
-        <div class="segment three">
+        <div class="print-location-grid">
           <button class="side active" data-side="front">Front</button>
           <button class="side" data-side="back">Back</button>
           <button class="side" data-side="leftChest">Left Chest</button>
+          <button class="side" data-side="rightChest">Right Chest</button>
+          <button class="side" data-side="leftSleeve">Left Sleeve</button>
+          <button class="side" data-side="rightSleeve">Right Sleeve</button>
         </div>
 
         <button id="uploadBtn" class="btn primary full">Upload Artwork</button>
         <input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
 
-        <div class="stack">
-          <input id="textInput" placeholder="Type your text">
+        <div class="text-studio">
+          <div class="tool-heading"><strong>Text Studio</strong><span>Add as many text layers as needed</span></div>
+          <textarea id="textInput" rows="2" placeholder="Type your text"></textarea>
           <div class="two">
-            <select id="fontSelect">
+            <select id="fontSelect" aria-label="Font">
               <option value="Arial">Arial</option>
               <option value="Impact">Impact</option>
               <option value="Georgia">Georgia</option>
               <option value="Trebuchet MS">Trebuchet</option>
               <option value="Courier New">Courier</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Tahoma">Tahoma</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Comic Sans MS">Comic Sans</option>
+              <option value="Arial Black">Arial Black</option>
+              <option value="Brush Script MT">Brush Script</option>
+              <option value="Lucida Handwriting">Handwriting</option>
             </select>
             <input id="textColor" type="color" value="#111111" aria-label="Text color">
           </div>
-          <button id="addTextBtn" class="btn soft full">Add Text</button>
+          <div class="text-format-row">
+            <button id="boldBtn" class="format-btn active" type="button"><b>B</b></button>
+            <button id="italicBtn" class="format-btn" type="button"><i>I</i></button>
+            <button id="underlineBtn" class="format-btn" type="button"><u>U</u></button>
+            <button class="align-btn format-btn active" data-align="center" type="button">Center</button>
+          </div>
+          <div class="two">
+            <label class="compact-label">Outline color<input id="textOutlineColor" type="color" value="#ffffff"></label>
+            <label class="compact-label">Shadow color<input id="textShadowColor" type="color" value="#000000"></label>
+          </div>
+          <div class="two">
+            <label class="compact-label">Outline<input id="textOutlineSize" type="number" min="0" max="24" value="0"></label>
+            <label class="compact-label">Shadow blur<input id="shadowBlur" type="number" min="0" max="40" value="0"></label>
+          </div>
+          <label class="compact-label">Letter spacing<input id="letterSpacing" type="range" min="-5" max="30" value="0"></label>
+          <label class="compact-label">Curve<input id="curveRange" type="range" min="-160" max="160" value="0"></label>
+          <button id="addTextBtn" class="btn soft full">Add New Text Layer</button>
+          <button id="updateTextBtn" class="btn ghost full" type="button">Update Selected Text</button>
         </div>
 
         <div class="selected-box">
           <h3>Selected item</h3>
+          <div class="selection-actions">
+            <button id="lockBtn" class="btn ghost" type="button">Lock</button>
+            <button id="hideBtn" class="btn ghost" type="button">Hide</button>
+            <button id="flipHBtn" class="btn ghost" type="button">Flip H</button>
+            <button id="flipVBtn" class="btn ghost" type="button">Flip V</button>
+          </div>
           <div class="two">
             <button id="centerHBtn" class="btn ghost">Center Horizontally</button>
             <button id="centerVBtn" class="btn ghost">Center Vertically</button>
@@ -102,6 +137,14 @@
             <button id="undoBtn" class="btn ghost">Undo</button>
             <button id="redoBtn" class="btn ghost">Redo</button>
           </div>
+          <div class="two">
+            <button id="bringFrontBtn" class="btn ghost" type="button">Bring Forward</button>
+            <button id="sendBackBtn" class="btn ghost" type="button">Send Back</button>
+          </div>
+        </div>
+        <div class="layers-panel">
+          <div class="layers-head"><h3>Layers</h3><span id="layerCount">0</span></div>
+          <div id="layersList" class="layers-list"></div>
         </div>
       </aside>
 
@@ -111,12 +154,12 @@
           <div class="top-actions"><button id="zoomOutBtn" class="btn ghost">−</button><span id="zoomLabel" class="zoom-label">100%</span><button id="zoomInBtn" class="btn ghost">+</button><button id="exportPrintBtn" class="btn ghost">Export Print PNG</button><button id="clearBtn" class="btn ghost">Clear side</button></div>
         </div>
         <div class="shirt-area">
-          <div id="garmentMockup" class="garment tee">
+          <div id="mockupWrap"><div id="garmentMockup" class="garment tee">
             <div class="garment-neck"></div>
             <div class="print-zone"><canvas id="designCanvas" width="700" height="840"></canvas></div>
-          </div>
+          </div></div>
         </div>
-        <p class="helper">Tap or click an item to select it. Drag it to move. Use the sliders to resize or rotate.</p>
+        <p class="helper">Click an item to select it. Drag the center to move, drag a blue corner to resize, and drag the round top handle to rotate.</p>
       </section>
     </div>
     <div class="footer-actions">
@@ -156,6 +199,9 @@
           <div><h3>Front</h3><img id="frontPreview" alt="Front preview"></div>
           <div><h3>Back</h3><img id="backPreview" alt="Back preview"></div>
           <div><h3>Left Chest</h3><img id="leftChestPreview" alt="Left chest preview"></div>
+          <div><h3>Right Chest</h3><img id="rightChestPreview" alt="Right chest preview"></div>
+          <div><h3>Left Sleeve</h3><img id="leftSleevePreview" alt="Left sleeve preview"></div>
+          <div><h3>Right Sleeve</h3><img id="rightSleevePreview" alt="Right sleeve preview"></div>
         </div>
       </section>
 
@@ -191,6 +237,6 @@
 </main>
 
 <div id="toast" class="toast"></div>
-<script src="config.js"></script><script src="catalog.js"></script><script src="app.js"></script><script src="click-hotfix.js"></script>
+<script src="config.js"></script><script src="catalog.js"></script><script src="app.js"></script><script src="click-hotfix.js"></script><script src="designer-v10.js"></script>
 </body>
 </html>
