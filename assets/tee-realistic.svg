@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#f7f8fa"/><stop offset="1" stop-color="#e5e9ef"/>
+</linearGradient>
+<filter id="s"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity=".18"/></filter>
+</defs>
+<g filter="url(#s)">
+<path d="M145 102L205 72L235 108H277L307 72L367 102L446 180L394 257L350 228L338 452H174L162 228L118 257L66 180Z" fill="url(#g)" stroke="#c8ced8" stroke-width="7"/>
+<path d="M216 73Q256 128 296 73" fill="none" stroke="#d8dde5" stroke-width="18"/>
+</g></svg>

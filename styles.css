@@ -29,3 +29,5 @@
 .mini-list{display:grid;gap:8px;margin-top:12px}
 .mini-row{display:flex;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--line);border-radius:10px}
 @media(max-width:800px){.tryon-layout,.admin-tools-grid{grid-template-columns:1fr}.tryon-controls{order:2}}
+
+.mini-list{display:grid;gap:8px;margin-top:14px}.mini-row{display:flex;justify-content:space-between;gap:12px;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff}
