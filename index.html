@@ -87,6 +87,10 @@
 
         <div class="selected-box">
           <h3>Selected item</h3>
+          <div class="two">
+            <button id="centerHBtn" class="btn ghost">Center Horizontally</button>
+            <button id="centerVBtn" class="btn ghost">Center Vertically</button>
+          </div>
           <label>Size<input id="sizeRange" type="range" min="30" max="300" value="110"></label>
           <label>Rotate<input id="rotateRange" type="range" min="-180" max="180" value="0"></label>
           <label>Opacity<input id="opacityRange" type="range" min="20" max="100" value="100"></label>
@@ -104,7 +108,7 @@
       <section class="card designer">
         <div class="designer-head">
           <div><h2 id="designerProductTitle">Classic T-Shirt</h2><p id="sideTitle">Front preview</p></div>
-          <button id="clearBtn" class="btn ghost">Clear side</button>
+          <div class="top-actions"><button id="exportPrintBtn" class="btn ghost">Export Print PNG</button><button id="clearBtn" class="btn ghost">Clear side</button></div>
         </div>
         <div class="shirt-area">
           <div id="garmentMockup" class="garment tee">

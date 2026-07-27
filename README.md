@@ -1,20 +1,26 @@
-# Custom Shirt Platform V6
+# Custom Shirt Platform V7
 
-This update adds:
-- More realistic T-shirt and hoodie mockups for Virtual Try-On
-- A launch checklist page
-- Improved business-launch workflow
-- Updated offline cache
+This upgrade adds practical production tools to the designer:
+
+- Visible print-area boundary
+- Snap-to-center behavior
+- Center horizontally and vertically buttons
+- Layers panel
+- Export current print area as a transparent PNG
+- Improved object boundaries inside the printable canvas
 
 ## Update with GitHub Desktop
 
 1. Extract this ZIP.
 2. Copy everything inside.
-3. Paste it into `Documents\GitHub\custom-shirt-studio`.
+3. Paste it into:
+   `Documents\GitHub\custom-shirt-studio`
 4. Choose **Replace the files in the destination**.
 5. Open GitHub Desktop.
-6. Enter `Upgrade to Version 6`.
+6. Summary: `Upgrade to Version 7`
 7. Click **Commit to main**.
 8. Click **Push origin**.
 
-Real payments, customer accounts, cloud orders, emails, SMS, and automatic body-aware AI fitting still require secure backend services and private credentials.
+## Important
+
+This is still a browser-based prototype. Real payments, shared cloud orders, customer accounts, production-grade AI try-on, and app-store publishing still require secure services and private business accounts.

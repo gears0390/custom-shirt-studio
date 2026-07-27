@@ -1,3 +1,43 @@
+
+function refreshLayers(){
+  const list=document.getElementById("layersList");
+  const count=document.getElementById("layerCount");
+  if(!list||!count)return;
+  const items=objects();
+  count.textContent=items.length;
+  list.innerHTML="";
+  [...items].reverse().forEach((o,reverseIndex)=>{
+    const actualIndex=items.length-1-reverseIndex;
+    const row=document.createElement("button");
+    row.className="layer-row"+(o.id===state.selectedId?" active":"");
+    row.innerHTML=`<span>${o.type==="text"?"T":"IMG"}</span><strong>${o.type==="text"?o.text:"Artwork"}</strong>`;
+    row.onclick=()=>{state.selectedId=o.id;sync(o);render();refreshLayers()};
+    list.appendChild(row);
+  });
+}
+function clampObjectToCanvas(o){
+  const b=bounds(o);
+  o.x=Math.max(b.w/2,Math.min(canvas.width-b.w/2,o.x));
+  o.y=Math.max(b.h/2,Math.min(canvas.height-b.h/2,o.y));
+}
+function snapObject(o){
+  const snap=18;
+  if(Math.abs(o.x-canvas.width/2)<snap)o.x=canvas.width/2;
+  if(Math.abs(o.y-canvas.height/2)<snap)o.y=canvas.height/2;
+  clampObjectToCanvas(o);
+}
+function exportCurrentPrint(){
+  const oldSelected=state.selectedId;
+  state.selectedId=null;
+  render(false);
+  const a=document.createElement("a");
+  a.href=canvas.toDataURL("image/png");
+  a.download=`${state.product.name.replace(/\s+/g,"-").toLowerCase()}-${state.side}-print.png`;
+  a.click();
+  state.selectedId=oldSelected;
+  render();
+}
+
 const CONFIG = window.APP_CONFIG || {};
 const brandNameEl = document.getElementById("brandName");
 const taglineEl = document.getElementById("tagline");
@@ -43,7 +83,7 @@ colors.forEach(([n,h],i)=>{const b=document.createElement("button");b.className=
 
 function bounds(o){if(o.type==="text"){ctx.save();ctx.font=`900 ${o.size}px ${o.font}`;const w=ctx.measureText(o.text).width;ctx.restore();return{w,h:o.size*1.1}}return{w:o.size*o.ratio,h:o.size}}
 function draw(o,sel=true){const b=bounds(o);ctx.save();ctx.globalAlpha=(o.opacity??100)/100;ctx.translate(o.x,o.y);ctx.rotate(o.rotation*Math.PI/180);if(o.type==="text"){ctx.fillStyle=o.color;ctx.font=`900 ${o.size}px ${o.font}`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(o.text,0,0)}else if(o.img)ctx.drawImage(o.img,-b.w/2,-b.h/2,b.w,b.h);if(sel&&o.id===state.selectedId){ctx.globalAlpha=1;ctx.strokeStyle="#2698f2";ctx.lineWidth=5;ctx.setLineDash([12,8]);ctx.strokeRect(-b.w/2-10,-b.h/2-10,b.w+20,b.h+20)}ctx.restore()}
-function render(sel=true){ctx.clearRect(0,0,canvas.width,canvas.height);objects().forEach(o=>draw(o,sel))}
+function render(sel=true){ctx.clearRect(0,0,canvas.width,canvas.height);objects().forEach(o=>draw(o,sel));refreshLayers()}
 function sync(o){if(!o)return;$("sizeRange").value=o.size;$("rotateRange").value=o.rotation;$("opacityRange").value=o.opacity??100}
 
 $("addTextBtn").onclick=()=>{const t=$("textInput").value.trim();if(!t)return toast("Type something first.");snapshot();const o={id:uid(),type:"text",text:t,x:canvas.width/2,y:canvas.height/2,size:110,rotation:0,opacity:100,color:$("textColor").value,font:$("fontSelect").value};objects().push(o);state.selectedId=o.id;sync(o);render()};
@@ -82,3 +122,11 @@ $("saveBtn").onclick=()=>{const save={...state,sides:Object.fromEntries(Object.e
 
 $("placeOrderBtn").onclick=()=>{if(!$("approvalCheck").checked)return toast("Approve the design first.");if(!$("customerName").value.trim()||!$("customerEmail").value.trim())return toast("Enter your name and email.");const q=qty(),u=unit(q),order={orderNumber:"CS-"+Math.floor(100000+Math.random()*900000),createdAt:new Date().toISOString(),status:"New",customer:{name:$("customerName").value.trim(),email:$("customerEmail").value.trim(),phone:$("customerPhone").value.trim()},product:state.product.name,color:state.colorName,quantities:state.quantities,quantity:q,printAreas:areas(),fulfillment:$("deliveryMethod").value,notes:$("orderNotes").value.trim(),total:Number((q*u).toFixed(2)),previews:{front:preview("front"),back:preview("back"),leftChest:preview("leftChest")}};const orders=JSON.parse(localStorage.getItem("customShirtOrders")||"[]");orders.unshift(order);localStorage.setItem("customShirtOrders",JSON.stringify(orders));alert(`Order ${order.orderNumber} created!\n\nOpen the Admin page to see it.`)};
 $("garmentMockup").style.setProperty("--shirt",state.color);$("selectedProductThumb").style.setProperty("--shirt",state.color);updateProductUI();render();
+
+
+const centerH=document.getElementById("centerHBtn");
+if(centerH)centerH.onclick=()=>{const o=selected();if(!o)return toast("Select an item first.");snapshot();o.x=canvas.width/2;render()};
+const centerV=document.getElementById("centerVBtn");
+if(centerV)centerV.onclick=()=>{const o=selected();if(!o)return toast("Select an item first.");snapshot();o.y=canvas.height/2;render()};
+const exportBtn=document.getElementById("exportPrintBtn");
+if(exportBtn)exportBtn.onclick=exportCurrentPrint;
