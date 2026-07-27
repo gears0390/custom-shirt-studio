@@ -1,26 +1,31 @@
-# Custom Shirt Platform V7
+# Custom Shirt Platform V9
 
-This upgrade adds practical production tools to the designer:
+Version 9 adds:
 
-- Visible print-area boundary
-- Snap-to-center behavior
-- Center horizontally and vertically buttons
-- Layers panel
-- Export current print area as a transparent PNG
-- Improved object boundaries inside the printable canvas
+- Designer zoom controls
+- Curved text
+- Text outline color and thickness
+- Text shadow
+- Letter spacing
+- Coupon-code support using coupons created in Admin
+- Local product manager for names and prices
+- Improved mobile layout
+- Updated offline cache
 
 ## Update with GitHub Desktop
 
-1. Extract this ZIP.
+1. Extract the ZIP.
 2. Copy everything inside.
-3. Paste it into:
-   `Documents\GitHub\custom-shirt-studio`
+3. Paste into `Documents\GitHub\custom-shirt-studio`.
 4. Choose **Replace the files in the destination**.
 5. Open GitHub Desktop.
-6. Summary: `Upgrade to Version 7`
-7. Click **Commit to main**.
-8. Click **Push origin**.
+6. Confirm the `icons` folder contains only:
+   - icon-192.svg
+   - icon-512.svg
+7. Summary: `Upgrade to Version 9`
+8. Click **Commit to main**
+9. Click **Push origin**
 
 ## Important
 
-This is still a browser-based prototype. Real payments, shared cloud orders, customer accounts, production-grade AI try-on, and app-store publishing still require secure services and private business accounts.
+Product changes, coupons, and orders are still stored only in the current browser. A shared business dashboard, customer accounts, secure payments, emails, and live orders require a secure cloud backend.

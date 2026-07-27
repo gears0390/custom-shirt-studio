@@ -1,4 +1,74 @@
 
+let designerZoom=1;
+let activeCoupon=null;
+
+function updateDesignerZoom(){
+  const wrap=document.getElementById("mockupWrap");
+  const label=document.getElementById("zoomLabel");
+  if(wrap) wrap.style.transform=`scale(${designerZoom})`;
+  if(label) label.textContent=`${Math.round(designerZoom*100)}%`;
+}
+
+function drawTextWithEffects(o){
+  const text=o.text||"";
+  const chars=[...text];
+  const spacing=Number(o.letterSpacing||0);
+  const curve=Number(o.curve||0);
+  const fontSize=Number(o.size||110);
+  ctx.font=`900 ${fontSize}px ${o.font||"Arial"}`;
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  const widths=chars.map(ch=>ctx.measureText(ch).width);
+  const total=widths.reduce((a,b)=>a+b,0)+Math.max(0,chars.length-1)*spacing;
+  let cursor=-total/2;
+
+  chars.forEach((ch,i)=>{
+    const w=widths[i];
+    const cx=cursor+w/2;
+    const ratio=total ? cx/(total/2) : 0;
+    const yOffset=curve*(ratio*ratio);
+    ctx.save();
+    ctx.translate(cx,yOffset);
+    if(o.shadowColor && Number(o.shadowBlur||0)>0){
+      ctx.shadowColor=o.shadowColor;
+      ctx.shadowBlur=Number(o.shadowBlur||0);
+      ctx.shadowOffsetX=4;
+      ctx.shadowOffsetY=4;
+    }
+    if(o.outlineSize>0){
+      ctx.lineWidth=Number(o.outlineSize);
+      ctx.strokeStyle=o.outlineColor||"#ffffff";
+      ctx.strokeText(ch,0,0);
+    }
+    ctx.fillStyle=o.color||"#111111";
+    ctx.fillText(ch,0,0);
+    ctx.restore();
+    cursor+=w+spacing;
+  });
+}
+
+function couponDiscountAmount(subtotal){
+  if(!activeCoupon)return 0;
+  if(activeCoupon.type==="percent") return subtotal*(activeCoupon.value/100);
+  if(activeCoupon.type==="fixed") return Math.min(subtotal,activeCoupon.value);
+  return 0;
+}
+
+function loadCoupons(){
+  const saved=JSON.parse(localStorage.getItem("customShirtCoupons")||"[]");
+  return saved.map(c=>({
+    code:String(c.code||"").toUpperCase(),
+    type:c.type||"percent",
+    value:Number(c.value ?? c.percent ?? 0)
+  }));
+}
+
+let productSearchTerm="";
+document.addEventListener("DOMContentLoaded",()=>{
+ const s=document.getElementById("productSearch");
+ if(s){s.oninput=()=>{productSearchTerm=s.value.trim().toLowerCase();renderProducts();};}
+});
+
 function refreshLayers(){
   const list=document.getElementById("layersList");
   const count=document.getElementById("layerCount");
@@ -47,16 +117,8 @@ if (taglineEl && CONFIG.tagline) taglineEl.textContent = CONFIG.tagline;
 
 const $=id=>document.getElementById(id);
 const canvas=$("designCanvas"),ctx=canvas.getContext("2d");
-const products=[
-{id:"tee-classic",category:"T-Shirts",name:"Classic T-Shirt",base:31.99,type:"tee"},
-{id:"tee-premium",category:"T-Shirts",name:"Premium T-Shirt",base:35.99,type:"tee"},
-{id:"long-sleeve",category:"T-Shirts",name:"Long Sleeve Shirt",base:39.99,type:"tee"},
-{id:"hoodie",category:"Hoodies",name:"Pullover Hoodie",base:49.99,type:"hoodie"},
-{id:"crewneck",category:"Hoodies",name:"Crewneck Sweatshirt",base:44.99,type:"hoodie"},
-{id:"polo",category:"Polos",name:"Classic Polo",base:42.99,type:"tee"},
-{id:"tote",category:"Accessories",name:"Tote Bag",base:24.99,type:"tee"},
-{id:"mug",category:"Drinkware",name:"Ceramic Mug",base:19.99,type:"tee"}
-];
+const products=(window.PRODUCT_CATALOG||[]);
+products.forEach(p=>{p.base=p.basePrice;});
 const categories=[...new Set(products.map(p=>p.category))];
 const colors=[["White","#fff"],["Black","#17191d"],["Navy","#172a46"],["Royal","#245cb8"],["Red","#d6303d"],["Forest","#1e5a3b"],["Gray","#8d939b"],["Pink","#ee6f9f"],["Orange","#e66d28"],["Purple","#633f83"]];
 const sizeSets={Adult:["S","M","L","XL","2XL","3XL","4XL","5XL"],Youth:["YXS","YS","YM","YL","YXL"]};
@@ -75,18 +137,18 @@ function restore(serial){const d=JSON.parse(serial);state.sides=d.sides;rehydrat
 function rehydrateImages(){Object.values(state.sides).flat().forEach(o=>{if(o.type==="image"&&o.src&&!o.img){const img=new Image();img.onload=render;img.src=o.src;o.img=img}})}
 
 function renderCategories(){ $("categoryTabs").innerHTML="";categories.forEach(c=>{const b=document.createElement("button");b.className="category"+(c===state.category?" active":"");b.textContent=c;b.onclick=()=>{state.category=c;renderCategories();renderProducts()};$("categoryTabs").appendChild(b)})}
-function renderProducts(){ $("productGrid").innerHTML="";products.filter(p=>p.category===state.category).forEach(p=>{const c=document.createElement("article");c.className="product-card"+(p.id===state.product.id?" selected":"");c.innerHTML=`<div class="product-visual"><div class="product-shape"></div></div><h3>${p.name}</h3><p>Starting at $${p.base.toFixed(2)}</p>`;c.onclick=()=>{state.product=p;updateProductUI();renderProducts();changeStep(2)};$("productGrid").appendChild(c)})}
+function renderProducts(){ $("productGrid").innerHTML="";products.filter(p=>p.category===state.category&&(!productSearchTerm||`${p.name} ${p.description||""}`.toLowerCase().includes(productSearchTerm))).forEach(p=>{const c=document.createElement("article");c.className="product-card"+(p.id===state.product.id?" selected":"");c.innerHTML=`<div class="product-visual"><div class="product-shape"></div></div><h3>${p.name}</h3><p>${p.description||""}</p><p><strong>Starting at $${p.base.toFixed(2)}</strong></p>`;c.onclick=()=>{state.product=p;updateProductUI();renderProducts();changeStep(2)};$("productGrid").appendChild(c)})}
 function updateProductUI(){ $("selectedProductName").textContent=state.product.name;$("selectedProductPrice").textContent=`Starting at $${state.product.base.toFixed(2)}`;$("designerProductTitle").textContent=state.product.name;$("garmentMockup").className="garment "+state.product.type}
 renderCategories();renderProducts();
 
 colors.forEach(([n,h],i)=>{const b=document.createElement("button");b.className="swatch"+(i===0?" active":"");b.style.background=h;b.title=n;b.onclick=()=>{document.querySelectorAll(".swatch").forEach(x=>x.classList.remove("active"));b.classList.add("active");state.colorName=n;state.color=h;$("garmentMockup").style.setProperty("--shirt",h);$("selectedProductThumb").style.setProperty("--shirt",h)};$("swatches").appendChild(b)});
 
 function bounds(o){if(o.type==="text"){ctx.save();ctx.font=`900 ${o.size}px ${o.font}`;const w=ctx.measureText(o.text).width;ctx.restore();return{w,h:o.size*1.1}}return{w:o.size*o.ratio,h:o.size}}
-function draw(o,sel=true){const b=bounds(o);ctx.save();ctx.globalAlpha=(o.opacity??100)/100;ctx.translate(o.x,o.y);ctx.rotate(o.rotation*Math.PI/180);if(o.type==="text"){ctx.fillStyle=o.color;ctx.font=`900 ${o.size}px ${o.font}`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(o.text,0,0)}else if(o.img)ctx.drawImage(o.img,-b.w/2,-b.h/2,b.w,b.h);if(sel&&o.id===state.selectedId){ctx.globalAlpha=1;ctx.strokeStyle="#2698f2";ctx.lineWidth=5;ctx.setLineDash([12,8]);ctx.strokeRect(-b.w/2-10,-b.h/2-10,b.w+20,b.h+20)}ctx.restore()}
+function draw(o,sel=true){const b=bounds(o);ctx.save();ctx.globalAlpha=(o.opacity??100)/100;ctx.translate(o.x,o.y);ctx.rotate(o.rotation*Math.PI/180);if(o.type==="text"){drawTextWithEffects(o)}else if(o.img)ctx.drawImage(o.img,-b.w/2,-b.h/2,b.w,b.h);if(sel&&o.id===state.selectedId){ctx.globalAlpha=1;ctx.strokeStyle="#2698f2";ctx.lineWidth=5;ctx.setLineDash([12,8]);ctx.strokeRect(-b.w/2-10,-b.h/2-10,b.w+20,b.h+20)}ctx.restore()}
 function render(sel=true){ctx.clearRect(0,0,canvas.width,canvas.height);objects().forEach(o=>draw(o,sel));refreshLayers()}
 function sync(o){if(!o)return;$("sizeRange").value=o.size;$("rotateRange").value=o.rotation;$("opacityRange").value=o.opacity??100}
 
-$("addTextBtn").onclick=()=>{const t=$("textInput").value.trim();if(!t)return toast("Type something first.");snapshot();const o={id:uid(),type:"text",text:t,x:canvas.width/2,y:canvas.height/2,size:110,rotation:0,opacity:100,color:$("textColor").value,font:$("fontSelect").value};objects().push(o);state.selectedId=o.id;sync(o);render()};
+$("addTextBtn").onclick=()=>{const t=$("textInput").value.trim();if(!t)return toast("Type something first.");snapshot();const o={id:uid(),type:"text",text:t,x:canvas.width/2,y:canvas.height/2,size:110,rotation:0,opacity:100,color:$("textColor").value,font:$("fontSelect").value,outlineColor:$("textOutlineColor")?.value||"#ffffff",outlineSize:Number($("textOutlineSize")?.value||0),shadowColor:$("textShadowColor")?.value||"#000000",shadowBlur:8,letterSpacing:Number($("letterSpacing")?.value||0),curve:Number($("curveRange")?.value||0)};objects().push(o);state.selectedId=o.id;sync(o);render()};
 $("textInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("addTextBtn").click()});
 $("uploadBtn").onclick=()=>$("fileInput").click();
 $("fileInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{snapshot();const o={id:uid(),type:"image",img,src:r.result,x:canvas.width/2,y:canvas.height/2,size:180,rotation:0,opacity:100,ratio:img.width/img.height};objects().push(o);state.selectedId=o.id;sync(o);render()};img.src=r.result};r.readAsDataURL(f);e.target.value=""};
@@ -130,3 +192,28 @@ const centerV=document.getElementById("centerVBtn");
 if(centerV)centerV.onclick=()=>{const o=selected();if(!o)return toast("Select an item first.");snapshot();o.y=canvas.height/2;render()};
 const exportBtn=document.getElementById("exportPrintBtn");
 if(exportBtn)exportBtn.onclick=exportCurrentPrint;
+
+
+document.getElementById("zoomInBtn")?.addEventListener("click",()=>{
+  designerZoom=Math.min(1.5,designerZoom+0.1);
+  updateDesignerZoom();
+});
+document.getElementById("zoomOutBtn")?.addEventListener("click",()=>{
+  designerZoom=Math.max(0.6,designerZoom-0.1);
+  updateDesignerZoom();
+});
+updateDesignerZoom();
+
+document.getElementById("applyCouponBtn")?.addEventListener("click",()=>{
+  const code=(document.getElementById("couponInput")?.value||"").trim().toUpperCase();
+  const message=document.getElementById("couponMessage");
+  const coupon=loadCoupons().find(c=>c.code===code);
+  if(!coupon){
+    activeCoupon=null;
+    if(message) message.textContent="Coupon not found.";
+  }else{
+    activeCoupon=coupon;
+    if(message) message.textContent=`Coupon ${coupon.code} applied.`;
+  }
+  if(typeof renderCheckout==="function")renderCheckout();
+});

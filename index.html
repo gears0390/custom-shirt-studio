@@ -43,7 +43,7 @@
   <section id="panel1" class="panel active">
     <div class="card section-card">
       <div class="section-head"><div><h2>Choose a product</h2><p>Select what you want to customize.</p></div></div>
-      <div id="categoryTabs" class="category-tabs"></div>
+      <div class="catalog-tools"><input id="productSearch" placeholder="Search products"><div id="categoryTabs" class="category-tabs"></div></div>
       <div id="productGrid" class="product-grid"></div>
     </div>
   </section>
@@ -108,7 +108,7 @@
       <section class="card designer">
         <div class="designer-head">
           <div><h2 id="designerProductTitle">Classic T-Shirt</h2><p id="sideTitle">Front preview</p></div>
-          <div class="top-actions"><button id="exportPrintBtn" class="btn ghost">Export Print PNG</button><button id="clearBtn" class="btn ghost">Clear side</button></div>
+          <div class="top-actions"><button id="zoomOutBtn" class="btn ghost">−</button><span id="zoomLabel" class="zoom-label">100%</span><button id="zoomInBtn" class="btn ghost">+</button><button id="exportPrintBtn" class="btn ghost">Export Print PNG</button><button id="clearBtn" class="btn ghost">Clear side</button></div>
         </div>
         <div class="shirt-area">
           <div id="garmentMockup" class="garment tee">
@@ -179,7 +179,7 @@
             <option value="Shipping">Shipping</option>
             <option value="Local delivery">Local delivery</option>
           </select>
-          <textarea id="orderNotes" placeholder="Order notes"></textarea>
+          <textarea id="orderNotes" placeholder="Order notes"></textarea><div class="two"><input id="couponInput" placeholder="Coupon code"><button id="applyCouponBtn" class="btn soft">Apply</button></div><div id="couponMessage" class="coupon-message"></div>
         </div>
 
         <button id="placeOrderBtn" class="btn pay full">Place Demo Order</button>
@@ -191,6 +191,6 @@
 </main>
 
 <div id="toast" class="toast"></div>
-<script src="config.js"></script><script src="app.js"></script>
+<script src="config.js"></script><script src="catalog.js"></script><script src="app.js"></script>
 </body>
 </html>

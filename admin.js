@@ -1,4 +1,33 @@
 
+function renderProductManager(){
+  const box=document.getElementById("productAdminList");
+  if(!box)return;
+  const catalog=window.PRODUCT_CATALOG||[];
+  const overrides=JSON.parse(localStorage.getItem("customShirtProductOverrides")||"{}");
+  box.innerHTML="";
+  catalog.forEach(p=>{
+    const o=overrides[p.id]||{};
+    const row=document.createElement("div");
+    row.className="product-admin-row";
+    row.innerHTML=`
+      <div><strong>${p.name}</strong><small>${p.category}</small></div>
+      <input class="name-input" value="${o.name||p.name}">
+      <input class="price-input" type="number" min="0" step="0.01" value="${o.basePrice??p.basePrice??p.base??0}">
+      <button class="btn soft save-product">Save</button>
+    `;
+    row.querySelector(".save-product").onclick=()=>{
+      overrides[p.id]={
+        name:row.querySelector(".name-input").value.trim()||p.name,
+        basePrice:Number(row.querySelector(".price-input").value||0)
+      };
+      localStorage.setItem("customShirtProductOverrides",JSON.stringify(overrides));
+      alert("Product override saved on this device.");
+    };
+    box.appendChild(row);
+  });
+}
+
+
 const $=id=>document.getElementById(id);
 let orders=JSON.parse(localStorage.getItem("customShirtOrders")||"[]");
 function money(n){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(n||0)}
@@ -42,3 +71,5 @@ document.getElementById("addInventoryBtn").onclick=()=>{
   renderBusinessTools();
 };
 renderBusinessTools();
+
+renderProductManager();
